@@ -1,0 +1,148 @@
+---
+import data from "@/data/about.json";
+import Layout from "@/layouts/Layout.astro";
+import Timeline from "@/components/Timeline.astro";
+import TimelineItem from "@/components/TimelineItem.astro";
+import { useTranslation } from '@/utils/utils';
+import { languageList } from "@/i18n/ui";
+import TimeLineEducation from "@/components/TimelineEducation.astro";
+
+const currentLang = Astro.currentLocale || 'es';
+const translateUI = useTranslation(currentLang as keyof typeof languageList);
+
+const { images,
+  professionalTimeline: { timelineId: pId, timelineTitle: pTitle, timelineElements: pElements}, 
+  academyTimeline: { timelineId: aId, timelineTitle: aTitle , timelineElements: aElements }} = data;
+---
+
+<Layout pageTitle="About">
+  <main class="main container">
+    <section class="about__image mb">
+      <div id="aboutPicture" class="about__picture"></div>
+    </section>
+    <section class="about__text">
+      <section class="bio">
+        <p>{translateUI('about.abstract1')}</p>
+        <p>{translateUI('about.abstract2')}</p>
+      </section>
+      
+      <Timeline timelineTitle={pTitle}>
+        { 
+          pElements.map(item => <TimelineItem id={pId} { ...item } />)
+        }
+      </Timeline>
+
+      <TimeLineEducation />
+    </section>
+  </main>
+</Layout>
+
+<script>
+
+  import data from "@/data/about.json";
+  import { getRandomNumber, setBackgroundImage } from '@/utils/utils';
+
+  document.addEventListener('astro:page-load', () => {
+    const picture = document.querySelector('#aboutPicture') as HTMLElement;
+    const { images } = data;
+    const backgroundImage = images[getRandomNumber(images.length - 1)].src;
+    if (picture) {
+      setBackgroundImage(picture, backgroundImage);
+    }
+  });
+
+</script>
+
+<style>
+
+  .main {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  @media (width >= 768px) {
+    .main {
+      margin-top: 10rem;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 2rem;
+      min-height: 60rem;
+      height:  calc(100vh - 16rem);
+      max-height: 75rem;
+      overflow-y: scroll;
+      margin-bottom: none;
+    }
+  }
+
+  @media (width >= 1200px) {
+    .main {
+      gap: 0;
+    }
+  }
+
+  /* about */
+
+  .about__image {
+    filter: grayscale(100%);
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+  }
+  
+  @media (width >= 768px) {
+    .about__image {
+      justify-content: flex-start;
+      width: 50%;
+      position: sticky;
+      top: 0;
+      margin-bottom: 0;
+    }
+  }
+
+  .about__picture {
+    width: 100vw;
+    height: 74rem;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+  }
+
+  @media (width >= 768px) {
+    .about__picture {
+      width: 100%;
+    }
+  }
+
+  @media (width >= 1024px) {
+    .about__picture {
+      width: 55rem;
+    }
+  }
+
+  .about__text {
+    font-size: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 6.5rem;
+  }
+  
+  @media (width >= 768px) {
+    .about__text {
+      width: 50%;
+      padding-right: 1rem;
+      text-align: justify;
+      text-align-last: left;
+    }
+  }
+
+  .bio {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+</style>
